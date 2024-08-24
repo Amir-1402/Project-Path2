@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const addBtn = document.getElementById("add-button");
     const deleteAllBtn = document.getElementById("deleteall-button");
     const modal = document.getElementById('myModal');
-    const closeModalBtn = document.getElementById('closeModalBtn');
 
     let contacts = [
         { name: "Mohammad Zaaroura", phone: "052-209-0019", email: "zaaroura@gmail.com", image: "images/zaaroura.jpg" },
@@ -23,9 +22,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     deleteAllBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        contacts = [];
-        updateContactList();
+        deleteAllContacts();
     });
+
+    function deleteAllContacts() {
+        if (confirm("Are you sure you want to delete all contacts?")) {
+            contacts = [];
+            updateContactList();
+            alert("All contacts have been deleted.");
+        }
+    }
+
+    function deleteContact(index) {
+        if (confirm("Are you sure you want to delete this contact?")) {
+            contacts.splice(index, 1);
+            updateContactList();
+            alert("Contact has been deleted.");
+        }
+    }
 
     function showAddContactForm(contact = {}, index = null) {
         openModal(`
@@ -37,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <label for="email">Email:</label>
             <input type="email" id="email" value="${contact.email || ''}" required>
             <label for="image">Image:</label>
-            <input type="file" id="imageInput" accept="image/*"${contact.image}>
+            <input type="file" id="imageInput" accept="image/*"${contact.image ? ' value="' + contact.image + '"' : ''}>
             <img id="imagePreview" src="${contact.image || ''}" alt="Image Preview" style="display: ${contact.image ? 'block' : 'none'}; max-width: 200px; margin-top: 10px;">
             <button id="saveContact">${index !== null ? "Update" : "Save"} Contact</button>
             <button id="cancelContact">Cancel</button>
@@ -86,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     contacts.push(contact);
                 }
                 updateContactList();
-                closeModal(); // Close the modal after saving
+                closeModal();
             };
             reader.readAsDataURL(imageInput.files[0]);
         } else {
@@ -97,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 contacts.push(contact);
             }
             updateContactList();
-            closeModal(); // Close the modal after saving
+            closeModal();
         }
     }
 
@@ -154,11 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             infoDiv.innerHTML = '';
         }
-    }
-
-    function deleteContact(index) {
-        contacts.splice(index, 1);
-        updateContactList();
     }
 
     function openModal(content) {
